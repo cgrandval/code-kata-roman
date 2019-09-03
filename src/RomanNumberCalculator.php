@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 class RomanNumberCalculator
@@ -22,16 +23,17 @@ class RomanNumberCalculator
     public function romanNumberToInteger(string $romanNumber): int
     {
         $integerNumber = 0;
-        while(strlen($romanNumber) > 0)
-        {
+
+        while(strlen($romanNumber) > 0) {
             $lastSymbol = substr($romanNumber, -2);
-            if(array_key_exists($lastSymbol, self::Symbols)) {
+
+            if (array_key_exists($lastSymbol, self::Symbols)) {
                 $integerNumber += self::Symbols[$lastSymbol];
                 $romanNumber = (string) substr($romanNumber, 0, -2);
                 continue;
             }
 
-            if(array_key_exists($romanNumber[-1], self::Symbols)) {
+            if (array_key_exists($romanNumber[-1], self::Symbols)) {
                 $integerNumber += self::Symbols[$romanNumber[-1]];
                 $romanNumber = (string) substr($romanNumber, 0, -1);
                 continue;
@@ -43,6 +45,24 @@ class RomanNumberCalculator
         return $integerNumber;
     }
 
+    public function integerToRomanNumber(int $input): string
+    {
+        if ($input <= 0) {
+            throw new InvalidArgumentException('Arg');
+        }
+
+        $reversed = array_reverse(array_flip(self::Symbols), true);
+        $output = '';
+
+
+        foreach ($reversed as $romanInt => $romanChar) {
+            $output .= str_repeat($romanChar, (int) floor($input / $romanInt));
+            $input %= $romanInt;
+        }
+
+        return $output;
+    }
+
     public function calculate(string $leftOperand, string $rightOperand): int
     {
         $leftOperand = $this->romanNumberToInteger($leftOperand);
@@ -51,6 +71,3 @@ class RomanNumberCalculator
         return $leftOperand + $rightOperand;
     }
 }
-
-$calculator = new RomanNumberCalculator();
-var_dump($calculator->calculate('IXXCCM', 'MCD'));
